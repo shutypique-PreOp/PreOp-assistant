@@ -2,6 +2,8 @@
 
 Prototype Next.js/TypeScript d’un assistant de consultation préopératoire.
 
+Voir le [plan MVP](./PLAN.md) pour le découpage des tâches et le périmètre.
+
 ## Important
 
 Cette version ne contient aucune recommandation médicale active. Elle ne doit
