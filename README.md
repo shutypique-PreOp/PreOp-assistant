@@ -3,6 +3,8 @@
 Prototype Next.js/TypeScript d’un copilote de consultation préopératoire, centré
 sur la **gestion des médicaments avant anesthésie**.
 
+Voir le [plan MVP](./PLAN.md) pour le découpage des tâches et le périmètre.
+
 ## Important
 
 Cette version ne contient **aucune recommandation médicale active**. Elle ne doit
