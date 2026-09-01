@@ -16,6 +16,8 @@ export type MedicationClass =
 
 export interface Medication {
   id: string;
+  /** Référence stable vers le catalogue (`src/lib/medications`). */
+  drugId: string;
   name: string;
   className: MedicationClass;
   dose: string;
@@ -45,6 +47,13 @@ export interface PatientCase {
   anesthesiaType: string;
   comorbidities: string[];
   allergies: Allergy[];
+  /** Identifiants catalogue pour pré-remplir les traitements au chargement. */
+  initialMedicationDrugIds: string[];
+  /** Détails optionnels par drugId (dose, indication) pour les cas démo. */
+  initialMedicationDetails?: Record<
+    string,
+    { dose?: string; indication?: string }
+  >;
   medications: Medication[];
   airwayNotes: string;
   cardioNotes: string;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
-import { DEMO_CASES } from "@/lib/cases";
+import { DEMO_CASE_TEMPLATES } from "@/lib/cases";
 
 export default function ConsultationIndexPage() {
   return (
@@ -17,7 +17,7 @@ export default function ConsultationIndexPage() {
         </div>
 
         <div className="case-list">
-          {DEMO_CASES.map((c) => (
+          {DEMO_CASE_TEMPLATES.map((c) => (
             <Link
               key={c.id}
               href={`/consultation/${c.id}`}
@@ -26,8 +26,8 @@ export default function ConsultationIndexPage() {
               <strong>{c.label}</strong>
               <span>
                 {c.patientInitials} · {c.age} ans · {c.asa} ·{" "}
-                {c.medications.length} traitements · risque{" "}
-                {c.bleedingRisk}
+                {c.initialMedicationDrugIds.length} traitements initiaux ·
+                risque {c.bleedingRisk}
               </span>
             </Link>
           ))}

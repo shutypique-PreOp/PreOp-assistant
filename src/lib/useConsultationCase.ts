@@ -1,13 +1,34 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import {
+  createPatientMedication,
+  getMedicationById,
+} from "@/lib/medications";
+import type { MedicationReference } from "@/lib/medications";
 import type { Medication, MedicationDecision, PatientCase } from "./types";
-import { getCaseById } from "./cases";
+import { getCaseTemplateById } from "./cases";
 
 const STORAGE_PREFIX = "preop-case:";
 
-function cloneCase(base: PatientCase): PatientCase {
-  return structuredClone(base);
+function buildInitialMedications(
+  template: Omit<PatientCase, "medications">,
+): Medication[] {
+  return template.initialMedicationDrugIds
+    .map((drugId) => {
+      const drug = getMedicationById(drugId);
+      if (!drug) return null;
+      const details = template.initialMedicationDetails?.[drugId];
+      return createPatientMedication(drug, details);
+    })
+    .filter((med): med is Medication => med !== null);
+}
+
+function hydrateCase(template: Omit<PatientCase, "medications">): PatientCase {
+  return {
+    ...template,
+    medications: buildInitialMedications(template),
+  };
 }
 
 export function useConsultationCase(caseId: string) {
@@ -15,8 +36,8 @@ export function useConsultationCase(caseId: string) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const base = getCaseById(caseId);
-    if (!base) {
+    const template = getCaseTemplateById(caseId);
+    if (!template) {
       setPatientCase(null);
       setReady(true);
       return;
@@ -27,10 +48,10 @@ export function useConsultationCase(caseId: string) {
       if (raw) {
         setPatientCase(JSON.parse(raw) as PatientCase);
       } else {
-        setPatientCase(cloneCase(base));
+        setPatientCase(hydrateCase(template));
       }
     } catch {
-      setPatientCase(cloneCase(base));
+      setPatientCase(hydrateCase(template));
     }
     setReady(true);
   }, [caseId]);
@@ -58,6 +79,29 @@ export function useConsultationCase(caseId: string) {
     [],
   );
 
+  const addMedication = useCallback((drug: MedicationReference) => {
+    setPatientCase((prev) => {
+      if (!prev) return prev;
+      if (prev.medications.some((m) => m.drugId === drug.id)) {
+        return prev;
+      }
+      return {
+        ...prev,
+        medications: [...prev.medications, createPatientMedication(drug)],
+      };
+    });
+  }, []);
+
+  const removeMedication = useCallback((medId: string) => {
+    setPatientCase((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        medications: prev.medications.filter((m) => m.id !== medId),
+      };
+    });
+  }, []);
+
   const setDecision = useCallback(
     (medId: string, decision: MedicationDecision) => {
       updateMedication(medId, { decision });
@@ -74,16 +118,18 @@ export function useConsultationCase(caseId: string) {
   }, []);
 
   const resetCase = useCallback(() => {
-    const base = getCaseById(caseId);
-    if (!base) return;
+    const template = getCaseTemplateById(caseId);
+    if (!template) return;
     sessionStorage.removeItem(STORAGE_PREFIX + caseId);
-    setPatientCase(cloneCase(base));
+    setPatientCase(hydrateCase(template));
   }, [caseId]);
 
   return {
     patientCase,
     ready,
     updateMedication,
+    addMedication,
+    removeMedication,
     setDecision,
     setAirwayNotes,
     setCardioNotes,
