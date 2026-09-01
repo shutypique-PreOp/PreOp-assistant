@@ -1,5 +1,10 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { ConsultationWorkspace } from "@/components/ConsultationWorkspace";
+import { DEMO_CASE_TEMPLATES } from "@/lib/cases";
+
+export function generateStaticParams() {
+  return DEMO_CASE_TEMPLATES.map((c) => ({ caseId: c.id }));
+}
 
 export default async function ConsultationCasePage({
   params,

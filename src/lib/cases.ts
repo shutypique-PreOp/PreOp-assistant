@@ -1,6 +1,10 @@
 import type { PatientCase } from "./types";
 
-export const DEMO_CASES: PatientCase[] = [
+/**
+ * Gabarits de dossiers démo — sans listes de médicaments figées.
+ * Les traitements initiaux sont résolus depuis le catalogue via `initialMedicationDrugIds`.
+ */
+export const DEMO_CASE_TEMPLATES: Omit<PatientCase, "medications">[] = [
   {
     id: "case-ortopedie",
     label: "PTH — patient polymédiqué",
@@ -25,63 +29,23 @@ export const DEMO_CASES: PatientCase[] = [
         reaction: "Éruption cutanée (enfance)",
       },
     ],
-    medications: [
-      {
-        id: "m1",
-        name: "Apixaban",
-        className: "Anticoagulant",
-        dose: "5 mg × 2 / j",
-        indication: "FA non valvulaire",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
-      },
-      {
-        id: "m2",
-        name: "Aspirine",
-        className: "Antiagrégant",
+    initialMedicationDrugIds: [
+      "apixaban",
+      "aspirine",
+      "metformine",
+      "bisoprolol",
+      "ramipril",
+    ],
+    initialMedicationDetails: {
+      apixaban: { dose: "5 mg × 2 / j", indication: "FA non valvulaire" },
+      aspirine: {
         dose: "75 mg / j",
         indication: "Prévention secondaire coronaire",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
       },
-      {
-        id: "m3",
-        name: "Metformine",
-        className: "Antidiabétique",
-        dose: "850 mg × 2 / j",
-        indication: "Diabète de type 2",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
-      },
-      {
-        id: "m4",
-        name: "Bisoprolol",
-        className: "Antihypertenseur",
-        dose: "2,5 mg / j",
-        indication: "HTA / rythme",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
-      },
-      {
-        id: "m5",
-        name: "Ramipril",
-        className: "Antihypertenseur",
-        dose: "5 mg / j",
-        indication: "HTA",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
-      },
-    ],
+      metformine: { dose: "850 mg × 2 / j", indication: "Diabète de type 2" },
+      bisoprolol: { dose: "2,5 mg / j", indication: "HTA / rythme" },
+      ramipril: { dose: "5 mg / j", indication: "HTA" },
+    },
     airwayNotes: "",
     cardioNotes: "",
   },
@@ -98,57 +62,44 @@ export const DEMO_CASES: PatientCase[] = [
     anesthesiaType: "Anesthésie générale",
     comorbidities: ["Coronarien récent (stent à 4 mois)", "Dyslipidémie"],
     allergies: [],
-    medications: [
-      {
-        id: "m1",
-        name: "Clopidogrel",
-        className: "Antiagrégant",
+    initialMedicationDrugIds: [
+      "clopidogrel",
+      "aspirine",
+      "atorvastatine",
+      "pantoprazole",
+    ],
+    initialMedicationDetails: {
+      clopidogrel: {
         dose: "75 mg / j",
         indication: "Bithérapie post-stent",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
       },
-      {
-        id: "m2",
-        name: "Aspirine",
-        className: "Antiagrégant",
+      aspirine: {
         dose: "75 mg / j",
         indication: "Bithérapie post-stent",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
       },
-      {
-        id: "m3",
-        name: "Atorvastatine",
-        className: "Autre",
-        dose: "40 mg / j",
-        indication: "Dyslipidémie",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
-      },
-      {
-        id: "m4",
-        name: "Pantoprazole",
-        className: "Autre",
+      atorvastatine: { dose: "40 mg / j", indication: "Dyslipidémie" },
+      pantoprazole: {
         dose: "40 mg / j",
         indication: "Protection gastrique",
-        decision: "non_renseigne",
-        holdDays: "",
-        resumeNote: "",
-        clinicianNote: "",
       },
-    ],
+    },
     airwayNotes: "",
     cardioNotes: "",
   },
 ];
 
-export function getCaseById(id: string): PatientCase | undefined {
-  return DEMO_CASES.find((c) => c.id === id);
+/** @deprecated Utiliser DEMO_CASE_TEMPLATES — conservé pour compatibilité d'import. */
+export const DEMO_CASES = DEMO_CASE_TEMPLATES;
+
+export function getCaseTemplateById(
+  id: string,
+): Omit<PatientCase, "medications"> | undefined {
+  return DEMO_CASE_TEMPLATES.find((c) => c.id === id);
+}
+
+/** @deprecated Utiliser getCaseTemplateById */
+export function getCaseById(
+  id: string,
+): Omit<PatientCase, "medications"> | undefined {
+  return getCaseTemplateById(id);
 }

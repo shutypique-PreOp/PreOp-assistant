@@ -26,4 +26,4 @@ export const DECISION_LABELS: Record<string, string> = {
 };
 
 export const DECISION_HINT =
-  "Décision renseignée par le clinicien. Aucune suggestion automatique dans ce prototype.";
+  "Recommandation générée à partir des variables renseignées. Valider selon le contexte clinique.";

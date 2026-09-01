@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/PreOp-assistant next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "tsx --test src/lib/medications/search.test.ts src/lib/decision-engine/clinical-path.test.ts"
   },
   "dependencies": {
     "next": "15.5.20",
@@ -22,6 +24,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.20",
     "tailwindcss": "^4",
+    "tsx": "^4.20.5",
     "typescript": "^5"
   }
 }
