@@ -13,9 +13,10 @@ const DECISIONS: MedicationDecision[] = [
 interface Props {
   medication: Medication;
   onChange: (patch: Partial<Medication>) => void;
+  onRemove?: () => void;
 }
 
-export function MedicationEditor({ medication, onChange }: Props) {
+export function MedicationEditor({ medication, onChange, onRemove }: Props) {
   return (
     <article className="med-editor">
       <div className="med-editor__head">
@@ -23,9 +24,21 @@ export function MedicationEditor({ medication, onChange }: Props) {
           <p className="med-editor__class">{medication.className}</p>
           <h3>{medication.name}</h3>
           <p className="med-editor__meta">
-            {medication.dose} · {medication.indication}
+            {medication.dose
+              ? `${medication.dose}${medication.indication ? ` · ${medication.indication}` : ""}`
+              : medication.indication || "Dose et indication à renseigner"}
           </p>
         </div>
+        {onRemove && (
+          <button
+            type="button"
+            className="btn btn-ghost med-editor__remove"
+            onClick={onRemove}
+            aria-label={`Retirer ${medication.name}`}
+          >
+            Retirer
+          </button>
+        )}
       </div>
 
       <fieldset className="med-editor__decisions">

@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { MedicationEditor } from "@/components/MedicationEditor";
+import { MedicationSearch } from "@/components/MedicationSearch";
 import { StepProgress } from "@/components/StepProgress";
 import { CONSULTATION_STEPS, DECISION_LABELS } from "@/lib/copy";
+import type { MedicationReference } from "@/lib/medications";
 import type { ConsultationStepId, PatientCase } from "@/lib/types";
 import { useConsultationCase } from "@/lib/useConsultationCase";
 
@@ -92,12 +94,16 @@ function AllergiesPanel({ patientCase }: { patientCase: PatientCase }) {
 function MedicationsPanel({
   patientCase,
   onChange,
+  onAdd,
+  onRemove,
 }: {
   patientCase: PatientCase;
   onChange: (
     medId: string,
     patch: Partial<PatientCase["medications"][number]>,
   ) => void;
+  onAdd: (drug: MedicationReference) => void;
+  onRemove: (medId: string) => void;
 }) {
   const stats = useMemo(() => {
     const total = patientCase.medications.length;
@@ -107,28 +113,44 @@ function MedicationsPanel({
     return { total, filled };
   }, [patientCase.medications]);
 
+  const existingDrugIds = useMemo(
+    () => patientCase.medications.map((m) => m.drugId),
+    [patientCase.medications],
+  );
+
   return (
     <section className="panel">
       <div className="panel-head-row">
         <div>
           <h2>Médicaments préopératoires</h2>
           <p className="panel-lead">
-            Pour chaque traitement, indiquez la conduite envisagée avant
-            l’anesthésie. Aucune suggestion automatique.
+            Recherchez et ajoutez les traitements du patient, puis indiquez la
+            conduite envisagée avant l’anesthésie. Aucune suggestion automatique.
           </p>
         </div>
         <p className="med-count">
           {stats.filled}/{stats.total} renseignés
         </p>
       </div>
+
+      <MedicationSearch existingDrugIds={existingDrugIds} onSelect={onAdd} />
+
       <div className="med-stack">
-        {patientCase.medications.map((med) => (
-          <MedicationEditor
-            key={med.id}
-            medication={med}
-            onChange={(patch) => onChange(med.id, patch)}
-          />
-        ))}
+        {patientCase.medications.length === 0 ? (
+          <p className="empty-state">
+            Aucun traitement ajouté. Utilisez la recherche ci-dessus pour
+            commencer.
+          </p>
+        ) : (
+          patientCase.medications.map((med) => (
+            <MedicationEditor
+              key={med.id}
+              medication={med}
+              onChange={(patch) => onChange(med.id, patch)}
+              onRemove={() => onRemove(med.id)}
+            />
+          ))
+        )}
       </div>
     </section>
   );
@@ -247,6 +269,8 @@ export function ConsultationWorkspace({ caseId }: { caseId: string }) {
     patientCase,
     ready,
     updateMedication,
+    addMedication,
+    removeMedication,
     setAirwayNotes,
     setCardioNotes,
     resetCase,
@@ -309,6 +333,8 @@ export function ConsultationWorkspace({ caseId }: { caseId: string }) {
           <MedicationsPanel
             patientCase={patientCase}
             onChange={updateMedication}
+            onAdd={addMedication}
+            onRemove={removeMedication}
           />
         )}
         {step === "terrain" && (
