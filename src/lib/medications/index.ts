@@ -4,6 +4,12 @@ export {
   getMedicationById,
   getMedicationsByIds,
 } from "./catalog";
+export {
+  INDICATION_CATALOG,
+  getIndicationById,
+  getIndicationsForDrug,
+} from "./indications";
+export type { IndicationReference, ThromboembolicRiskHelp } from "./indications";
 export { normalizeSearchText } from "./normalize";
 export { searchMedications, findMedicationByAnyName } from "./search";
 export {

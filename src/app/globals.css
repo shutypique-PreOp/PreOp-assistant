@@ -598,6 +598,196 @@ textarea {
   font-style: italic;
 }
 
+/* ——— Clinical workflow ——— */
+.clinical-field {
+  border: 0;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.clinical-field__label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 0.45rem;
+}
+
+.clinical-field__hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.clinical-date-input {
+  width: 100%;
+  max-width: 16rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+  background: white;
+  color: var(--ink);
+}
+
+.clinical-date-input:focus {
+  outline: 2px solid rgba(31, 122, 110, 0.35);
+  border-color: var(--accent);
+}
+
+.med-editor--clinical .med-editor__note textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+  background: white;
+  resize: vertical;
+}
+
+.surgery-search__field {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.surgery-search__field input {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+  background: white;
+}
+
+.surgery-search__clear {
+  font-size: 0.82rem;
+  padding: 0.4rem 0.65rem;
+}
+
+.help-accordion,
+.reasoning-accordion {
+  margin-top: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.help-accordion summary,
+.reasoning-accordion summary {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+  cursor: pointer;
+  list-style: none;
+}
+
+.help-accordion summary::-webkit-details-marker,
+.reasoning-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.help-accordion__body,
+.reasoning-accordion__body {
+  padding: 0 0.75rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.help-accordion__title {
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 0.35rem;
+}
+
+.help-accordion ul,
+.reasoning-accordion ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.help-accordion__source {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+.reasoning-accordion {
+  margin-top: 1rem;
+}
+
+.reasoning-accordion h4 {
+  margin: 0.65rem 0 0.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.recommendation {
+  margin-top: 1.1rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+
+.recommendation--pending {
+  background: rgba(154, 91, 31, 0.06);
+  border-color: rgba(154, 91, 31, 0.2);
+}
+
+.recommendation--unavailable {
+  background: rgba(139, 46, 46, 0.06);
+  border-color: rgba(139, 46, 46, 0.15);
+}
+
+.recommendation--complete {
+  background: rgba(31, 122, 110, 0.06);
+  border-color: rgba(31, 122, 110, 0.2);
+}
+
+.recommendation__status {
+  margin: 0 0 0.45rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.recommendation__missing {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+}
+
+.recommendation__hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+.recommendation__highlights {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recommendation__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.recommendation__label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  color: var(--accent-deep);
+}
+
+.recommendation__value {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
 .med-editor {
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -785,6 +975,37 @@ textarea {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent-deep);
+}
+
+.summary-meds__indication {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: rgba(16, 38, 44, 0.06);
+}
+
+.summary-meds__rec {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.summary-meds__rec p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.summary-meds__pending {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.summary-meds__note {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
 }
 
 .summary-meds__title span[data-decision="non_renseigne"] {

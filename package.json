@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/medications/search.test.ts"
+    "test": "tsx --test src/lib/medications/search.test.ts src/lib/decision-engine/clinical-path.test.ts"
   },
   "dependencies": {
     "next": "15.5.20",

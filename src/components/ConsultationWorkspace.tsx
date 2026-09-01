@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { MedicationEditor } from "@/components/MedicationEditor";
+import { MedicationClinicalEditor } from "@/components/MedicationClinicalEditor";
 import { MedicationSearch } from "@/components/MedicationSearch";
 import { StepProgress } from "@/components/StepProgress";
-import { CONSULTATION_STEPS, DECISION_LABELS } from "@/lib/copy";
+import { CONSULTATION_STEPS } from "@/lib/copy";
+import { evaluateMedication } from "@/lib/decision-engine";
 import type { MedicationReference } from "@/lib/medications";
 import type { ConsultationStepId, PatientCase } from "@/lib/types";
 import { useConsultationCase } from "@/lib/useConsultationCase";
@@ -107,9 +108,17 @@ function MedicationsPanel({
 }) {
   const stats = useMemo(() => {
     const total = patientCase.medications.length;
-    const filled = patientCase.medications.filter(
-      (m) => m.decision !== "non_renseigne",
-    ).length;
+    const filled = patientCase.medications.filter((m) => {
+      const evaluation = evaluateMedication({
+        drugId: m.drugId,
+        indicationId: m.indicationId,
+        surgeryId: m.surgeryId,
+        thromboembolicRisk: m.thromboembolicRisk,
+        renalFunction: m.renalFunction,
+        surgeryDate: m.surgeryDate || undefined,
+      });
+      return evaluation.status === "complete";
+    }).length;
     return { total, filled };
   }, [patientCase.medications]);
 
@@ -124,12 +133,12 @@ function MedicationsPanel({
         <div>
           <h2>Médicaments préopératoires</h2>
           <p className="panel-lead">
-            Recherchez et ajoutez les traitements du patient, puis indiquez la
-            conduite envisagée avant l’anesthésie. Aucune suggestion automatique.
+            Recherchez un traitement, renseignez uniquement les variables
+            nécessaires, puis consultez la recommandation.
           </p>
         </div>
         <p className="med-count">
-          {stats.filled}/{stats.total} renseignés
+          {stats.filled}/{stats.total} recommandations
         </p>
       </div>
 
@@ -143,7 +152,7 @@ function MedicationsPanel({
           </p>
         ) : (
           patientCase.medications.map((med) => (
-            <MedicationEditor
+            <MedicationClinicalEditor
               key={med.id}
               medication={med}
               onChange={(patch) => onChange(med.id, patch)}
@@ -216,21 +225,50 @@ function SummaryPanel({ patientCase }: { patientCase: PatientCase }) {
       <div className="summary-block">
         <h3>Plan médicamenteux</h3>
         <ul className="summary-meds">
-          {patientCase.medications.map((m) => (
-            <li key={m.id}>
-              <div className="summary-meds__title">
-                <strong>{m.name}</strong>
-                <span data-decision={m.decision}>
-                  {DECISION_LABELS[m.decision]}
-                </span>
-              </div>
-              <p>
-                {[m.holdDays, m.resumeNote, m.clinicianNote]
-                  .filter(Boolean)
-                  .join(" · ") || "Aucun détail saisi"}
-              </p>
-            </li>
-          ))}
+          {patientCase.medications.map((m) => {
+            const evaluation = evaluateMedication({
+              drugId: m.drugId,
+              indicationId: m.indicationId,
+              surgeryId: m.surgeryId,
+              thromboembolicRisk: m.thromboembolicRisk,
+              renalFunction: m.renalFunction,
+              surgeryDate: m.surgeryDate || undefined,
+            });
+
+            return (
+              <li key={m.id}>
+                <div className="summary-meds__title">
+                  <strong>{m.name}</strong>
+                  {m.indication && (
+                    <span className="summary-meds__indication">{m.indication}</span>
+                  )}
+                </div>
+                {evaluation.status === "complete" ? (
+                  <div className="summary-meds__rec">
+                    <p>
+                      <strong>Dernière prise —</strong>{" "}
+                      {evaluation.recommendation.lastDose}
+                    </p>
+                    <p>
+                      <strong>Relais —</strong> {evaluation.recommendation.bridging}
+                    </p>
+                    <p>
+                      <strong>Reprise —</strong> {evaluation.recommendation.resume}
+                    </p>
+                  </div>
+                ) : evaluation.status === "incomplete" ? (
+                  <p className="summary-meds__pending">
+                    Recommandation incomplète — informations manquantes
+                  </p>
+                ) : (
+                  <p className="summary-meds__pending">{evaluation.message}</p>
+                )}
+                {m.clinicianNote && (
+                  <p className="summary-meds__note">Note : {m.clinicianNote}</p>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
 

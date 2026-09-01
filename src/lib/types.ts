@@ -14,6 +14,10 @@ export type MedicationClass =
   | "Psychotrope"
   | "Autre";
 
+export type ThromboembolicRisk = "eleve" | "non_eleve" | "a_determiner";
+
+export type RenalFunction = "gte_50" | "30_49" | "lt_30" | "inconnue";
+
 export interface Medication {
   id: string;
   /** Référence stable vers le catalogue (`src/lib/medications`). */
@@ -21,7 +25,16 @@ export interface Medication {
   name: string;
   className: MedicationClass;
   dose: string;
+  /** Libellé affiché de l'indication */
   indication: string;
+  /** Référence catalogue indication */
+  indicationId?: string;
+  /** Référence catalogue chirurgie */
+  surgeryId?: string;
+  thromboembolicRisk?: ThromboembolicRisk;
+  renalFunction?: RenalFunction;
+  /** Date d'intervention (YYYY-MM-DD) — jamais présélectionnée */
+  surgeryDate?: string;
   decision: MedicationDecision;
   holdDays: string;
   resumeNote: string;
@@ -42,14 +55,13 @@ export interface PatientCase {
   sex: "F" | "M";
   asa: string;
   procedure: string;
+  /** Repère démo uniquement — non utilisé par le moteur décisionnel */
   procedureDate: string;
   bleedingRisk: "faible" | "intermédiaire" | "élevé";
   anesthesiaType: string;
   comorbidities: string[];
   allergies: Allergy[];
-  /** Identifiants catalogue pour pré-remplir les traitements au chargement. */
   initialMedicationDrugIds: string[];
-  /** Détails optionnels par drugId (dose, indication) pour les cas démo. */
   initialMedicationDetails?: Record<
     string,
     { dose?: string; indication?: string }
